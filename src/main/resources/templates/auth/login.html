@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Masuk')}"></head>
+
+<body>
+  <th:block th:replace="~{fragments/layout :: top}"></th:block>
+  <main id="main" tabindex="-1">
+    <div class="split login">
+      <section class="intro">
+        <h1>Masuk ke CodeVault.</h1>
+        <p class="muted">
+          Baca modul, ikuti video, atau pelajari soal interview. Pilih course
+          dan akses materi dari koleksimu.
+        </p>
+        <div class="login-type">
+          <strong>Modul E-Book</strong><span class="muted">Unduh file sesuai jatah pembelian.</span>
+        </div>
+        <div class="login-type">
+          <strong>Video Course</strong><span class="muted">Tonton chapter selama masa akses aktif.</span>
+        </div>
+        <div class="login-type">
+          <strong>Coding Test</strong><span class="muted">Pelajari soal dan pembahasan berulang kali.</span>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>Login</h2>
+        <form th:action="@{/login}" method="post">
+          <input th:replace="~{fragments/layout :: csrf}" />
+          <label for="username">Username</label>
+          <select id="username" name="username">
+            <option value="learner" th:selected="${selectedUsername == 'learner'}">
+              learner · Pembeli course
+            </option>
+            <option value="instructor" th:selected="${selectedUsername == 'instructor'}">
+              instructor · Pengelola course
+            </option>
+            <option value="learner2" th:selected="${selectedUsername == 'learner2'}">
+              learner2 · Pembeli kedua
+            </option>
+          </select>
+          <label for="password">Password</label><input id="password" name="password" value="demo123" type="password"
+            readonly autocomplete="current-password" required />
+          <button type="submit">Login</button>
+        </form>
+      </section>
+    </div>
+  </main>
+  <th:block th:replace="~{fragments/layout :: bottom}"></th:block>
+</body>
+
+</html>

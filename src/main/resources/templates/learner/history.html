@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head(${seller ? 'Transaksi pembayaran' : 'Riwayat pembelian'})}"></head>
+
+<body th:classappend="${isLearner} ? 'has-floating-cart'">
+  <th:block th:replace="~{fragments/layout :: top}"></th:block>
+  <main id="main" tabindex="-1">
+    <div class="page-head">
+      <div>
+        <h1 th:text="${seller ? 'Transaksi pembayaran.' : 'Riwayat pembelian.'}"></h1>
+        <p class="muted"
+          th:text="${seller ? 'Pembayaran diterima otomatis dan akses learner langsung dibuka. Seluruh transaksi merupakan simulasi.' : 'Lihat rincian biaya, status pembayaran, dan akses course.'}">
+        </p>
+      </div>
+    </div>
+    <div class="empty" th:if="${#lists.isEmpty(orders)}">
+      <h2>Belum ada transaksi</h2>
+      <p>Transaksi akan tampil di sini setelah checkout.</p>
+      <a th:if="${isLearner}" class="button" th:href="@{/catalog}">Lihat katalog</a>
+    </div>
+    <div class="stack">
+      <article class="panel" th:each="order : ${orders}">
+        <div class="page-head">
+          <div>
+            <h2 th:text="${'Pesanan #' + order.id()}"></h2>
+            <small th:text="${@display.date(order.createdAt())}"></small><small th:if="${seller}"
+              th:text="${' · ' + order.learner()}"></small>
+          </div>
+          <span class="status" th:text="${@display.status(order.status().name())}"></span>
+        </div>
+        <div class="line-item" th:each="item : ${order.items()}">
+          <div>
+            <strong th:text="${item.title()}"></strong><br /><small
+              th:text="${@display.type(item.type())}"></small><small
+              th:if="${isLearner and accessById.containsKey(item.id())}"
+              th:text="${' · ' + @display.access(accessById.get(item.id()))}"></small>
+          </div>
+          <span th:text="${@display.money(item.price())}"></span>
+        </div>
+        <div class="line-item">
+          <span
+            th:text="${@display.payment(order.paymentCode()) + ' · Admin ' + @display.money(order.fee())}"></span><strong
+            th:text="${@display.money(order.total())}"></strong>
+        </div>
+        <small th:if="${order.paidAt() != null}" th:text="${'Lunas pada ' + @display.date(order.paidAt())}"></small>
+        <div class="actions" th:if="${isLearner}">
+          <a th:href="@{/library}">Buka koleksi saya</a>
+        </div>
+      </article>
+    </div>
+  </main>
+  <th:block th:replace="~{fragments/layout :: bottom}"></th:block>
+</body>
+
+</html>

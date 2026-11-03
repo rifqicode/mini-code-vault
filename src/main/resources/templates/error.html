@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Halaman belum bisa dibuka')}"></head>
+
+<body th:classappend="${isLearner} ? 'has-floating-cart'">
+  <th:block th:replace="~{fragments/layout :: top}"></th:block>
+  <main id="main" tabindex="-1">
+    <h1>Halaman belum bisa dibuka.</h1>
+    <p>
+      Periksa akses akun dan data yang dikirim, lalu kembali ke halaman utama.
+    </p>
+    <a class="button" th:href="@{/}">Kembali ke halaman utama</a>
+  </main>
+  <th:block th:replace="~{fragments/layout :: bottom}"></th:block>
+</body>
+
+</html>

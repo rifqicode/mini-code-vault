@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head(title)">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title th:text="${title + ' | CodeVault'}">CodeVault</title>
+  <link rel="stylesheet" th:href="@{/styles.css}" />
+  <script th:src="@{/interactions.js}" defer></script>
+</head>
+
+<body>
+  <th:block th:fragment="top">
+    <a class="skip" href="#main">Lewati navigasi</a>
+    <header class="site-header">
+      <a class="brand" th:href="@{/}">CodeVault<span>Belajar pemrograman</span></a>
+      <nav aria-label="Navigasi utama">
+        <th:block th:if="${isLearner}">
+          <a th:href="@{/catalog}" th:attr="aria-current=${currentPath == '/catalog' ? 'page' : null}">Katalog</a>
+          <a th:href="@{/library}" th:attr="aria-current=${currentPath.startsWith('/library') ? 'page' : null}">Koleksi
+            saya</a>
+          <a th:href="@{/history}" th:attr="aria-current=${currentPath == '/history' ? 'page' : null}">Riwayat</a>
+        </th:block>
+        <th:block th:if="${isInstructor}">
+          <a th:href="@{/instructor/courses}"
+            th:attr="aria-current=${currentPath.startsWith('/instructor/courses') ? 'page' : null}">Konten saya</a>
+          <a th:href="@{/instructor/transactions}"
+            th:attr="aria-current=${currentPath == '/instructor/transactions' ? 'page' : null}">Pembayaran</a>
+          <a th:href="@{/instructor/sales}"
+            th:attr="aria-current=${currentPath == '/instructor/sales' ? 'page' : null}">Laporan</a>
+          <a th:href="@{/instructor/reviews}"
+            th:attr="aria-current=${currentPath == '/instructor/reviews' ? 'page' : null}">Ulasan</a>
+        </th:block>
+      </nav>
+      <div class="account" th:if="${currentUser != null}">
+        <details class="profile-menu">
+          <summary aria-label="Buka pilihan profil">
+            <span class="profile-name">
+              <span th:text="${currentUser.name()}">Nama pengguna</span>
+              <small th:text="${isInstructor ? 'Instruktur' : 'Learner'}">Role</small>
+            </span>
+          </summary>
+          <div class="profile-dropdown">
+            <form th:action="@{/logout}" method="post">
+              <input th:replace="~{fragments/layout :: csrf}" />
+              <button type="submit" class="quiet">Keluar</button>
+            </form>
+          </div>
+        </details>
+      </div>
+    </header>
+    <div id="notice" th:if="${success != null}" role="status" th:text="${success}"></div>
+    <div class="page-error" th:if="${error != null}" role="alert" th:text="${error}"></div>
+  </th:block>
+
+  <input th:fragment="csrf" type="hidden" name="_csrf" th:value="${csrf}" />
+
+  <th:block th:fragment="bottom">
+    <th:block th:if="${isLearner}">
+      <button id="cart-toggle" class="floating-cart" type="button" aria-haspopup="dialog" aria-controls="cart-dialog"
+        hidden th:attr="aria-label=${'Buka keranjang, ' + cartCount + ' course'}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          aria-hidden="true">
+          <path d="M3 3h2l2.5 12h11l2-8H6"></path>
+          <circle cx="9" cy="20" r="1"></circle>
+          <circle cx="18" cy="20" r="1"></circle>
+        </svg>
+        <span>Keranjang</span><span class="cart-count" th:text="${cartCount}">0</span>
+      </button>
+      <dialog id="cart-dialog" class="cart-drawer" aria-labelledby="cart-title">
+        <header class="cart-header">
+          <h2 id="cart-title">Keranjang</h2>
+          <button id="cart-close" class="quiet" type="button" autofocus>
+            Tutup
+          </button>
+        </header>
+        <p id="cart-loading" role="status" hidden>Memuat keranjang…</p>
+        <div id="cart-feedback" role="alert" hidden>
+          <p id="cart-error-text"></p>
+          <button id="cart-retry" type="button">Coba lagi</button>
+        </div>
+        <div id="cart-content" class="cart-content"></div>
+      </dialog>
+      <noscript><a class="button" th:href="@{/cart}">Buka keranjang</a></noscript>
+    </th:block>
+  </th:block>
+</body>
+
+</html>

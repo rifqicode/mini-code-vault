@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head(${lesson.access().course().title()})}"></head>
+
+<body class="has-floating-cart">
+  <th:block th:replace="~{fragments/layout :: top}"></th:block>
+  <main id="main" tabindex="-1" th:with="course=${lesson.access().course()}">
+    <a class="back" th:href="@{/library}">Kembali ke koleksi</a>
+    <div class="page-head">
+      <div>
+        <h1 th:text="${course.title()}"></h1>
+        <p class="muted" th:text="${@display.access(lesson.access())}"></p>
+      </div>
+    </div>
+    <th:block th:if="${course.type() == 'CODING'}">
+      <p class="note">
+        Latihan mandiri: pikirkan atau tulis jawabanmu sendiri sebelum membuka
+        pembahasan. Soal dapat dipelajari berulang kali.
+      </p>
+      <section class="panel section-gap" th:each="question, iteration : ${lesson.questions()}">
+        <span class="course-kind" th:text="${'Soal ' + iteration.count + ' · ' + question.difficulty().name()}"></span>
+        <h2 th:text="${question.title()}"></h2>
+        <p th:text="${question.prompt()}"></p>
+        <details>
+          <summary>Lihat pembahasan</summary>
+          <div class="material" th:text="${question.solution()}"></div>
+        </details>
+      </section>
+    </th:block>
+    <div th:if="${course.type() == 'VIDEO'}" class="split detail">
+      <section>
+        <h2 id="chapter-title" th:text="${lesson.chapters().get(0)}"></h2>
+        <video id="player" controls controlslist="nodownload" preload="metadata" width="640" height="360"
+          th:src="@{/api/library/{id}/video(id=${course.id()})}">
+          <p>Browser Anda tidak mendukung pemutaran video.</p>
+        </video>
+        <p id="video-error" class="error" hidden>
+          Video tidak dapat dimuat. Periksa masa akses lalu muat ulang
+          halaman.
+        </p>
+        <p class="note">
+          Klip ini adalah video demonstrasi lokal berdurasi 8 detik. Semua
+          chapter menggunakan klip contoh yang sama; durasi course adalah
+          metadata contoh dari instruktur.
+        </p>
+      </section>
+      <aside class="panel">
+        <h2>Chapter</h2>
+        <ol class="chapters">
+          <li th:each="chapter : ${lesson.chapters()}">
+            <button class="secondary" type="button" data-chapter th:text="${chapter}"></button>
+          </li>
+        </ol>
+      </aside>
+    </div>
+    <form th:if="${course.type() == 'EBOOK'}" th:action="@{/library/{id}/download(id=${course.id()})}" method="post">
+      <input th:replace="~{fragments/layout :: csrf}" /><button type="submit">
+        Unduh e-book (.txt)
+      </button>
+    </form>
+  </main>
+  <th:block th:replace="~{fragments/layout :: bottom}"></th:block>
+</body>
+
+</html>

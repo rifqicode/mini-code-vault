@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Konten saya')}"></head>
+
+<body>
+  <th:block th:replace="~{fragments/layout :: top}"></th:block>
+  <main id="main" tabindex="-1">
+    <div class="page-head">
+      <div>
+        <h1>Konten milikmu.</h1>
+        <p class="muted">
+          Kelola materi, harga, publikasi, dan ketersediaan course.
+        </p>
+      </div>
+      <a class="button" th:href="@{/instructor/courses/new}">Tambah course</a>
+    </div>
+    <div class="empty" th:if="${#lists.isEmpty(courses)}">
+      <h2>Belum ada konten</h2>
+      <p>Buat course pertama untuk ditampilkan di katalog.</p>
+    </div>
+    <div class="stack">
+      <article class="panel" th:each="course : ${courses}">
+        <div class="page-head">
+          <div>
+            <span class="course-kind" th:text="${@display.type(course.type())}"></span>
+            <h2 th:text="${course.title()}"></h2>
+          </div>
+          <span class="status"
+            th:text="${course.archived() ? 'Diarsipkan' : @display.status(course.status().name())}"></span>
+        </div>
+        <p th:text="${course.accessInfo()}"></p>
+        <p>
+          <strong th:text="${@display.money(course.price())}"></strong><span
+            th:text="${course.available() ? ' · Tersedia' : ' · Tidak tersedia'}"></span>
+        </p>
+        <div class="actions" th:unless="${course.archived()}">
+          <a class="button secondary" th:href="@{/instructor/courses/{id}/edit(id=${course.id()})}">Edit course</a>
+          <form th:action="@{/instructor/courses/{id}/archive(id=${course.id()})}" method="post"
+            data-confirm="Arsipkan course ini? Hak akses pembeli lama tetap berlaku.">
+            <input th:replace="~{fragments/layout :: csrf}" /><button class="danger" type="submit">
+              Hapus / arsipkan
+            </button>
+          </form>
+        </div>
+        <small th:if="${course.archived()}">Pembeli lama tetap memiliki akses sesuai ketentuan
+          pembelian.</small>
+      </article>
+    </div>
+  </main>
+  <th:block th:replace="~{fragments/layout :: bottom}"></th:block>
+</body>
+
+</html>

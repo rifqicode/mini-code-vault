@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head(${detail.course().title()})}"></head>
+
+<body th:classappend="${isLearner} ? 'has-floating-cart'">
+  <th:block th:replace="~{fragments/layout :: top}"></th:block>
+  <main id="main" tabindex="-1" th:with="course=${detail.course()}">
+    <a class="back" th:href="@{/catalog}">Kembali ke katalog</a>
+    <div class="page-head">
+      <div>
+        <h1 th:text="${course.title()}"></h1>
+        <p class="muted" th:text="${@display.type(course.type())}"></p>
+      </div>
+    </div>
+    <div class="split detail">
+      <section>
+        <p th:text="${course.description()}"></p>
+        <h2>Informasi akses</h2>
+        <p th:text="${course.accessInfo()}"></p>
+        <th:block th:unless="${#lists.isEmpty(detail.chapters())}">
+          <h2>Daftar chapter</h2>
+          <ol class="chapters">
+            <li th:each="chapter : ${detail.chapters()}" th:text="${chapter}"></li>
+          </ol>
+        </th:block>
+        <p th:unless="${#lists.isEmpty(detail.difficulties())}"
+          th:text="${'Tingkat soal: ' + #strings.listJoin(detail.difficulties(), ', ')}"></p>
+        <p class="muted" th:text="${'Instruktur: ' + course.instructor()}"></p>
+      </section>
+      <aside class="panel">
+        <h2 th:text="${@display.money(course.price())}"></h2>
+        <p th:text="${course.accessInfo()}"></p>
+        <div th:replace="~{fragments/course :: purchase(${course})}"></div>
+        <p class="muted">
+          Biaya admin ditampilkan saat checkout. Pembayaran pada aplikasi ini
+          merupakan simulasi.
+        </p>
+      </aside>
+    </div>
+    <section class="section-gap">
+      <h2>Ulasan learner</h2>
+      <section th:replace="~{fragments/course :: reviews(${detail.reviews()})}"></section>
+    </section>
+  </main>
+  <th:block th:replace="~{fragments/layout :: bottom}"></th:block>
+</body>
+
+</html>

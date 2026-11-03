@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Ulasan course')}"></head>
+
+<body>
+  <th:block th:replace="~{fragments/layout :: top}"></th:block>
+  <main id="main" tabindex="-1">
+    <div class="page-head">
+      <div>
+        <h1>Ulasan course.</h1>
+        <p class="muted">
+          Rating dan masukan dari learner yang sudah menyelesaikan pembayaran.
+        </p>
+      </div>
+    </div>
+    <div class="empty" th:if="${#lists.isEmpty(reviews)}">
+      <h2>Belum ada ulasan</h2>
+      <p>
+        Ulasan akan muncul setelah pembeli memberikan rating dan komentar.
+      </p>
+    </div>
+    <section class="panel section-gap" th:each="item : ${reviews}">
+      <h2 th:text="${item.title()}"></h2>
+      <article class="review">
+        <div class="review-head">
+          <strong th:text="${item.review().learnerName()}"></strong><span class="rating"
+            th:text="${item.review().rating() + ' / 5'}"></span><small
+            th:text="${@display.date(item.review().updatedAt())}"></small>
+        </div>
+        <p th:text="${item.review().comment()}"></p>
+      </article>
+    </section>
+  </main>
+  <th:block th:replace="~{fragments/layout :: bottom}"></th:block>
+</body>
+
+</html>

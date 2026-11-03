@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Keranjang')}"></head>
+
+<body class="has-floating-cart">
+  <th:block th:replace="~{fragments/layout :: top}"></th:block>
+  <main id="main" tabindex="-1">
+    <div class="page-head">
+      <div>
+        <h1>Keranjang belajar.</h1>
+      </div>
+    </div>
+    <div th:replace="~{fragments/cart :: contents}"></div>
+  </main>
+  <th:block th:replace="~{fragments/layout :: bottom}"></th:block>
+</body>
+
+</html>

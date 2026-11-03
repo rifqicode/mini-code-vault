@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+  <div th:fragment="purchase(course)" class="actions">
+    <a th:if="${isInstructor}" class="button secondary"
+      th:href="@{/instructor/courses/{id}/edit(id=${course.id()})}">Edit course</a>
+    <th:block th:if="${isLearner}">
+      <a th:if="${ownedIds.contains(course.id())}" class="button secondary" th:href="@{/library}">Lihat koleksi</a>
+      <th:block th:unless="${ownedIds.contains(course.id())}">
+        <span th:if="${!course.available()}" class="status">Tidak tersedia</span>
+        <th:block th:if="${course.available()}">
+          <a th:if="${cartIds.contains(course.id())}" class="button secondary" th:href="@{/cart}" data-open-cart>Lihat
+            keranjang</a>
+          <form th:unless="${cartIds.contains(course.id())}" th:action="@{/cart/items/{id}(id=${course.id()})}"
+            method="post">
+            <input th:replace="~{fragments/layout :: csrf}" />
+            <button type="submit">Tambah ke keranjang</button>
+          </form>
+        </th:block>
+      </th:block>
+    </th:block>
+  </div>
+
+  <section th:fragment="reviews(items)">
+    <p class="muted" th:if="${#lists.isEmpty(items)}">
+      Belum ada ulasan untuk course ini.
+    </p>
+    <article class="review" th:each="review : ${items}">
+      <div class="review-head">
+        <strong th:text="${review.learnerName()}"></strong><span class="rating"
+          th:text="${review.rating() + ' / 5'}"></span><small th:text="${@display.date(review.updatedAt())}"></small>
+      </div>
+      <p th:text="${review.comment()}"></p>
+    </article>
+  </section>
+</body>
+
+</html>

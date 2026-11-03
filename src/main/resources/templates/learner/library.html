@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Koleksi saya')}"></head>
+
+<body class="has-floating-cart">
+  <th:block th:replace="~{fragments/layout :: top}"></th:block>
+  <main id="main" tabindex="-1">
+    <div class="page-head">
+      <div>
+        <h1>Koleksi belajarmu.</h1>
+        <p class="muted">
+          Seluruh course yang pembayarannya sudah selesai ada di sini.
+        </p>
+      </div>
+    </div>
+    <div class="empty" th:if="${#lists.isEmpty(library)}">
+      <h2>Belum ada course di koleksi</h2>
+      <p>Pilih course lalu selesaikan pembayaran untuk membuka materinya.</p>
+      <a class="button" th:href="@{/catalog}">Lihat katalog</a>
+    </div>
+    <div class="stack">
+      <article class="panel" th:each="owned : ${library}" th:with="course=${owned.course()}">
+        <span class="course-kind" th:text="${@display.type(course.type())}"></span>
+        <h2 th:text="${course.title()}"></h2>
+        <p th:class="${owned.active() ? 'muted' : 'error'}" th:text="${@display.access(owned)}"></p>
+        <div class="actions">
+          <th:block th:if="${owned.active()}">
+            <form th:if="${course.type() == 'EBOOK'}" th:action="@{/library/{id}/download(id=${course.id()})}"
+              method="post">
+              <input th:replace="~{fragments/layout :: csrf}" /><button type="submit" data-ebook-download>
+                Unduh e-book (.txt)
+              </button>
+            </form>
+            <a th:unless="${course.type() == 'EBOOK'}" class="button" th:href="@{/library/{id}(id=${course.id()})}"
+              th:text="${course.type() == 'VIDEO' ? 'Tonton course' : 'Buka soal & pembahasan'}"></a>
+          </th:block>
+          <span th:unless="${owned.active()}" class="status">Akses tidak aktif</span>
+          <a th:href="@{/library/{id}/review(id=${course.id()})}">Tulis / edit ulasan</a>
+        </div>
+      </article>
+    </div>
+  </main>
+  <th:block th:replace="~{fragments/layout :: bottom}"></th:block>
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Laporan penjualan')}"></head>
+
+<body>
+  <th:block th:replace="~{fragments/layout :: top}"></th:block>
+  <main id="main" tabindex="-1">
+    <div class="page-head">
+      <div>
+        <h1>Laporan penjualan.</h1>
+        <p class="muted">
+          Hanya transaksi lunas yang dihitung. Pendapatan konten dipisahkan
+          dari biaya admin.
+        </p>
+      </div>
+    </div>
+    <dl class="metric-list">
+      <div>
+        <dt>Pendapatan konten</dt>
+        <dd th:text="${@display.money(report.revenue())}"></dd>
+      </div>
+      <div>
+        <dt>Transaksi lunas</dt>
+        <dd th:text="${report.transactionCount()}"></dd>
+      </div>
+      <div>
+        <dt>Biaya admin</dt>
+        <dd th:text="${@display.money(report.fees())}"></dd>
+      </div>
+    </dl>
+    <h2>Penjualan per course</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Course</th>
+            <th>Pembelian</th>
+            <th>Pendapatan</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="item : ${report.byLearning()}">
+            <td th:text="${item.title()}"></td>
+            <td th:text="${item.count()}"></td>
+            <td class="nowrap" th:text="${@display.money(item.revenue())}"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h2 class="section-gap">Transaksi per metode</h2>
+    <div class="panel">
+      <div class="line-item" th:each="entry : ${report.byPayment()}">
+        <span th:text="${@display.payment(entry.key)}"></span><strong th:text="${entry.value + ' transaksi'}"></strong>
+      </div>
+    </div>
+  </main>
+  <th:block th:replace="~{fragments/layout :: bottom}"></th:block>
+</body>
+
+</html>

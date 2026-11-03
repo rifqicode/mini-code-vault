@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+  <div th:fragment="contents" data-cart-panel>
+    <p class="muted cart-intro">
+      Periksa course, pilih pembayaran, lalu mulai belajar.
+    </p>
+    <div th:if="${#lists.isEmpty(cart.items())}" class="empty">
+      <h2>Keranjang masih kosong</h2>
+      <p>Pilih course dari katalog untuk mulai belajar.</p>
+      <a class="button" th:href="@{/catalog}">Pilih course</a>
+    </div>
+    <div th:unless="${#lists.isEmpty(cart.items())}" class="split detail">
+      <section class="stack">
+        <article class="panel" th:each="course : ${cart.items()}">
+          <span class="course-kind" th:text="${@display.type(course.type())}"></span>
+          <h3 th:text="${course.title()}"></h3>
+          <p th:text="${course.accessInfo()}"></p>
+          <div class="line-item">
+            <strong th:text="${@display.money(course.price())}"></strong>
+            <form th:action="@{/cart/items/{id}/remove(id=${course.id()})}" method="post">
+              <input th:replace="~{fragments/layout :: csrf}" /><button class="danger" type="submit"
+                th:attr="aria-label=${'Hapus ' + course.title() + ' dari keranjang'}">
+                Hapus
+              </button>
+            </form>
+          </div>
+        </article>
+      </section>
+      <aside class="panel">
+        <h2>Ringkasan pembayaran</h2>
+        <form th:action="@{/checkout}" method="post" data-checkout>
+          <input th:replace="~{fragments/layout :: csrf}" />
+          <fieldset>
+            <legend>Metode pembayaran</legend>
+            <label class="payment-choice"><input type="radio" name="method" value="BANK" checked
+                th:attr="data-fee=${cart.quotes().get('BANK').fee()},data-total=${cart.quotes().get('BANK').total()}" /><span><strong>Transfer
+                  bank</strong>Tanpa biaya admin</span></label>
+            <label class="payment-choice"><input type="radio" name="method" value="CARD"
+                th:attr="data-fee=${cart.quotes().get('CARD').fee()},data-total=${cart.quotes().get('CARD').total()}" /><span><strong>Kartu
+                  kredit/debit</strong>Biaya admin 2,5%</span></label>
+            <label class="payment-choice"><input type="radio" name="method" value="EWALLET"
+                th:attr="data-fee=${cart.quotes().get('EWALLET').fee()},data-total=${cart.quotes().get('EWALLET').total()}" /><span><strong>E-wallet</strong>Biaya
+                admin Rp2.000</span></label>
+          </fieldset>
+          <div class="line-item">
+            <span>Subtotal</span><span th:text="${@display.money(cart.subtotal())}"></span>
+          </div>
+          <div class="line-item">
+            <span>Biaya admin</span><span data-checkout-fee
+              th:text="${@display.money(cart.quotes().get('BANK').fee())}"></span>
+          </div>
+          <div class="line-item total">
+            <span>Total</span><span data-checkout-total
+              th:text="${@display.money(cart.quotes().get('BANK').total())}"></span>
+          </div>
+          <p class="muted">
+            Semua metode langsung diterima. Ini simulasi, tanpa tagihan
+            sungguhan.
+          </p>
+          <button type="submit">Bayar & buka course</button>
+        </form>
+      </aside>
+    </div>
+  </div>
+</body>
+
+</html>

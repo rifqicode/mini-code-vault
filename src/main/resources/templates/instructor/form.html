@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head(${courseId == null ? 'Tambah course' : 'Edit course'})}"></head>
+
+<body>
+  <th:block th:replace="~{fragments/layout :: top}"></th:block>
+  <main id="main" tabindex="-1">
+    <a class="back" th:href="@{/instructor/courses}">Kembali ke konten saya</a>
+    <div class="page-head">
+      <div>
+        <h1 th:text="${courseId == null ? 'Tambah course.' : 'Edit course.'}"></h1>
+        <p class="muted">
+          Isi atribut umum dan materi khusus sesuai jenis course.
+        </p>
+      </div>
+    </div>
+    <form class="panel form-limit"
+      th:action="${courseId == null} ? @{/instructor/courses} : @{/instructor/courses/{id}(id=${courseId})}"
+      method="post" data-learning-form>
+      <input th:replace="~{fragments/layout :: csrf}" />
+      <div class="field-grid">
+        <label for="course-type">Jenis course<select id="course-type" name="type" th:disabled="${courseId != null}">
+            <option value="EBOOK" th:selected="${form.type() == 'EBOOK'}">
+              Modul E-Book
+            </option>
+            <option value="VIDEO" th:selected="${form.type() == 'VIDEO'}">
+              Video Course
+            </option>
+            <option value="CODING" th:selected="${form.type() == 'CODING'}">
+              Coding Test
+            </option>
+          </select></label>
+        <input th:if="${courseId != null}" type="hidden" name="type" th:value="${form.type()}" />
+        <label for="course-status">Status<select id="course-status" name="status">
+            <option value="DRAFT" th:selected="${form.status() == 'DRAFT'}">
+              Draft
+            </option>
+            <option value="PUBLISHED" th:selected="${form.status() == 'PUBLISHED'}">
+              Dipublikasikan
+            </option>
+            <option value="SUSPENDED" th:selected="${form.status() == 'SUSPENDED'}">
+              Ditangguhkan
+            </option>
+          </select></label>
+      </div>
+      <label for="course-title">Judul</label><input id="course-title" name="title" maxlength="160" required
+        th:value="${form.title()}" />
+      <label for="course-description">Deskripsi</label><textarea id="course-description" name="description"
+        maxlength="4000" required th:text="${form.description()}"></textarea>
+      <label for="course-price">Harga (rupiah)</label><input id="course-price" name="price" type="number" min="0"
+        max="100000000" step="1" required th:value="${form.price()}" />
+      <label class="checkline"><input name="available" type="checkbox" value="true"
+          th:checked="${form.available()}" />Tersedia untuk dibeli saat dipublikasikan</label>
+      <fieldset data-course-type="EBOOK" th:hidden="${form.type() != 'EBOOK'}" th:disabled="${form.type() != 'EBOOK'}">
+        <legend>Materi e-book</legend>
+        <label for="maxDownloads">Batas unduhan</label><input id="maxDownloads" name="maxDownloads" type="number"
+          min="1" max="100" required th:value="${form.maxDownloads()}" />
+        <label for="ebookText">Isi e-book (.txt)<small>Materi ini akan menjadi file teks yang dapat diunduh
+            pembeli.</small></label><textarea id="ebookText" name="ebookText" maxlength="50000" required
+          th:text="${form.ebookText()}"></textarea>
+      </fieldset>
+      <fieldset data-course-type="VIDEO" th:hidden="${form.type() != 'VIDEO'}" th:disabled="${form.type() != 'VIDEO'}">
+        <legend>Materi video</legend>
+        <div class="field-grid">
+          <label for="accessDays">Masa akses (hari)<input id="accessDays" name="accessDays" type="number" min="1"
+              max="3650" required th:value="${form.accessDays()}" /></label><label for="durationMinutes">Total durasi
+            (menit)<input id="durationMinutes" name="durationMinutes" type="number" min="1" max="100000" required
+              th:value="${form.durationMinutes()}" /></label>
+        </div>
+        <label for="chapters">Daftar chapter<small>Satu judul per baris, maksimal 100 chapter. Video menggunakan
+            klip demonstrasi lokal yang sama.</small></label><textarea id="chapters" name="chapters" required
+          th:text="${form.chapters()}"></textarea>
+      </fieldset>
+      <fieldset data-course-type="CODING" th:hidden="${form.type() != 'CODING'}"
+        th:disabled="${form.type() != 'CODING'}">
+        <legend>Soal & pembahasan</legend>
+        <label for="questions">Daftar soal<small>Satu soal per baris: Judul | EASY/MEDIUM/HARD | Pertanyaan |
+            Pembahasan. Maksimal 100 soal; hindari karakter | di dalam
+            materi.</small></label><textarea id="questions" name="questions" rows="8" required
+          th:text="${form.questions()}"></textarea>
+      </fieldset>
+      <div class="actions">
+        <button type="submit">Simpan course</button><a th:href="@{/instructor/courses}">Batal</a>
+      </div>
+    </form>
+  </main>
+  <th:block th:replace="~{fragments/layout :: bottom}"></th:block>
+</body>
+
+</html>

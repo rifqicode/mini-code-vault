@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Ulasan')}"></head>
+
+<body class="has-floating-cart">
+  <th:block th:replace="~{fragments/layout :: top}"></th:block>
+  <main id="main" tabindex="-1">
+    <a class="back" th:href="@{/library}">Kembali ke koleksi</a>
+    <div class="page-head">
+      <div>
+        <h1>Bagikan pengalaman belajar.</h1>
+        <p class="muted" th:text="${owned.course().title()}"></p>
+      </div>
+    </div>
+    <form class="panel form-limit" th:action="@{/library/{id}/review(id=${owned.course().id()})}" method="post">
+      <input th:replace="~{fragments/layout :: csrf}" />
+      <label for="rating">Rating</label><select id="rating" name="rating">
+        <option th:each="value : ${#numbers.sequence(5,1,-1)}" th:value="${value}" th:selected="${rating == value}"
+          th:text="${value + ' / 5'}"></option>
+      </select>
+      <label for="comment">Ulasan</label><textarea id="comment" name="comment" maxlength="2000" required
+        th:text="${comment}"></textarea>
+      <button type="submit">Simpan ulasan</button>
+    </form>
+  </main>
+  <th:block th:replace="~{fragments/layout :: bottom}"></th:block>
+</body>
+
+</html>

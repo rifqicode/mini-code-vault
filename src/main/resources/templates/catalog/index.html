@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Katalog')}"></head>
+
+<body th:classappend="${isLearner} ? 'has-floating-cart'">
+  <th:block th:replace="~{fragments/layout :: top}"></th:block>
+  <main id="main" tabindex="-1">
+    <form class="toolbar" th:action="@{/catalog}" method="get">
+      <label for="search">Cari course<input id="search" name="q" type="search" placeholder="Judul atau deskripsi"
+          th:value="${q}" /></label>
+      <label for="type-filter">Jenis course<select id="type-filter" name="type">
+          <option value="">Semua jenis</option>
+          <option value="EBOOK" th:selected="${type == 'EBOOK'}">
+            Modul E-Book
+          </option>
+          <option value="VIDEO" th:selected="${type == 'VIDEO'}">
+            Video Course
+          </option>
+          <option value="CODING" th:selected="${type == 'CODING'}">
+            Coding Test
+          </option>
+        </select></label>
+      <button type="submit">Cari course</button>
+    </form>
+    <p class="muted" th:text="${courses.size() + ' course tersedia'}"></p>
+    <div class="empty" th:if="${#lists.isEmpty(courses)}">
+      <h2>Course tidak ditemukan</h2>
+      <p>Coba kata pencarian atau jenis course yang lain.</p>
+      <a th:href="@{/catalog}">Tampilkan semua course</a>
+    </div>
+    <div class="course-list">
+      <article class="course-row" th:each="course, iteration : ${courses}">
+        <span class="course-index" aria-hidden="true" th:text="${iteration.count}"></span>
+        <div>
+          <span class="course-kind" th:text="${@display.type(course.type())}"></span>
+          <h2>
+            <a th:href="@{/courses/{id}(id=${course.id()})}" th:text="${course.title()}"></a>
+          </h2>
+          <p th:text="${course.description()}"></p>
+          <p class="muted" th:text="${course.accessInfo()}"></p>
+          <small
+            th:text="${course.reviewCount() == 0 ? 'Belum ada ulasan' : #numbers.formatDecimal(course.rating(),1,1) + ' / 5 · ' + course.reviewCount() + ' ulasan'}"></small><small
+            th:text="${' · Instruktur ' + course.instructor()}"></small>
+        </div>
+        <div class="course-purchase">
+          <span class="price" th:text="${@display.money(course.price())}"></span>
+          <div th:replace="~{fragments/course :: purchase(${course})}"></div>
+        </div>
+      </article>
+    </div>
+  </main>
+  <th:block th:replace="~{fragments/layout :: bottom}"></th:block>
+</body>
+
+</html>
