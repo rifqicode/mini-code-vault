@@ -35,19 +35,6 @@ Login memakai session server. Akun kedua disediakan untuk mencoba pemisahan kera
 - Video Course: masa akses sejak pembayaran berhasil, total durasi, daftar chapter, dan pemutar video melalui endpoint yang memeriksa kepemilikan.
 - Coding Test: daftar soal dengan tingkat EASY/MEDIUM/HARD dan pembahasan yang dapat dibuka berulang kali; tanpa editor atau eksekusi kode.
 
-## Pembayaran dan akses
-
-| Metode             | Biaya admin           | Penyelesaian            |
-| ------------------ | --------------------- | ----------------------- |
-| Transfer bank      | Rp0                   | Simulasi langsung lunas |
-| Kartu kredit/debit | 2,5% subtotal         | Simulasi langsung lunas |
-| E-wallet           | Rp2.000 per transaksi | Simulasi langsung lunas |
-
-Uang dihitung dengan `BigDecimal`. Biaya kartu dibulatkan ke rupiah terdekat dengan `HALF_UP`.
-
-Semua metode pembayaran langsung diterima, tanpa konfirmasi manual, dan materi langsung tersedia di koleksi. Transaksi menyimpan snapshot materi, harga, dan ketentuan akses. Edit atau arsip course tidak mengubah hak pembelian lama. Course yang sudah dibeli tidak dapat dibeli ulang.
-
-Pendapatan instruktur hanya menghitung subtotal course dari transaksi lunas; biaya admin dilaporkan terpisah.
 
 ## Struktur
 
